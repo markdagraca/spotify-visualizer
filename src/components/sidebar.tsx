@@ -2,7 +2,19 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "./ui/button"
-import { ChevronLeft, ChevronRight, Music2, Settings, LogIn, LogOut, Waves } from "lucide-react"
+import { 
+  ChevronLeft, 
+  ChevronRight, 
+  Music2, 
+  Settings, 
+  LogIn, 
+  LogOut, 
+  Waves,
+  Play,
+  Pause,
+  SkipBack,
+  SkipForward
+} from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ThemeToggle } from "./theme-toggle"
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar"
@@ -30,6 +42,7 @@ export function Sidebar() {
   const [user, setUser] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [nowPlaying, setNowPlaying] = useState<NowPlaying | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
 
@@ -83,6 +96,49 @@ export function Sidebar() {
     router.refresh()
   }
 
+  const handlePlaybackAction = async (action: 'play' | 'pause' | 'next' | 'previous') => {
+    if (!nowPlaying && action !== 'play') return
+    setIsLoading(true)
+    try {
+      const response = await fetch('/api/spotify/playback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ action })
+      })
+
+      if (response.ok) {
+        if (action === 'play' || action === 'pause') {
+          setNowPlaying(prev => prev ? { ...prev, is_playing: action === 'play' } : null)
+        } else {
+          // For next/previous, fetch the new track
+          const nowPlayingRes = await fetch("/api/spotify/now-playing")
+          if (nowPlayingRes.ok) {
+            const data = await nowPlayingRes.json()
+            setNowPlaying(data)
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Failed to control playback:", error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handlePlayPause = () => {
+    handlePlaybackAction(nowPlaying?.is_playing ? 'pause' : 'play')
+  }
+
+  const handleSkipNext = () => {
+    handlePlaybackAction('next')
+  }
+
+  const handleSkipPrevious = () => {
+    handlePlaybackAction('previous')
+  }
+
   return (
     <div
       className={cn(
@@ -121,6 +177,37 @@ export function Sidebar() {
                     <p className="text-sm text-muted-foreground truncate">
                       {nowPlaying.artists.map(a => a.name).join(", ")}
                     </p>
+                    {/* Playback Controls */}
+                    <div className="flex items-center justify-center gap-2 mt-4">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={handleSkipPrevious}
+                        disabled={isLoading}
+                      >
+                        <SkipBack className="h-5 w-5" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={handlePlayPause}
+                        disabled={isLoading}
+                      >
+                        {nowPlaying.is_playing ? (
+                          <Pause className="h-5 w-5" />
+                        ) : (
+                          <Play className="h-5 w-5" />
+                        )}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={handleSkipNext}
+                        disabled={isLoading}
+                      >
+                        <SkipForward className="h-5 w-5" />
+                      </Button>
+                    </div>
                   </>
                 )}
               </div>

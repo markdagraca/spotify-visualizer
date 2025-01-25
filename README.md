@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Spotify Visualizer
+
+A proof-of-concept project exploring the feasibility of creating a Windows Media Player-style music visualizer using Spotify's Web API.
+
+## Project Goal
+
+The goal was to investigate if it's possible to create real-time music visualizations using Spotify's API data. The project specifically aimed to recreate the classic waveform visualizations from Windows Media Player.
+
+## Key Finding
+
+**The project revealed that this is no longer feasible with Spotify's current API.** The audio analysis endpoints that would have made this possible have been deprecated. This makes it impossible to get the detailed audio data needed for traditional waveform visualizations.
+
+## What Was Built
+
+- Basic Spotify authentication and playback controls
+- A simple Three.js visualization using available track metadata
+- A responsive UI with play/pause, next/previous controls
+- Dark/light theme support
+
+## Tech Stack
+
+- Next.js 14
+- TypeScript
+- Three.js
+- Spotify Web API
+- Tailwind CSS
+- Shadcn UI
 
 ## Getting Started
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Add Spotify credentials to `.env.local`:
+```env
+SPOTIFY_CLIENT_ID=your_client_id
+SPOTIFY_CLIENT_SECRET=your_client_secret
+SPOTIFY_REDIRECT_URI=http://localhost:3000/api/auth/callback
 ```
+4. Run with: `npm run dev`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Conclusion
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+While the original goal of creating a classic music visualizer wasn't achievable due to API limitations, this project serves as a useful reference for:
+- Working with Spotify's Web API
+- Implementing OAuth authentication
+- Basic Three.js integration in Next.js
+- Modern React patterns and TypeScript usage
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+*Built as an afternoon exploration of Spotify API capabilities and limitations.*

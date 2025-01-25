@@ -210,4 +210,54 @@ export function getSpotifyAuthUrl(): string {
   params.append('scope', scope)
 
   return `https://accounts.spotify.com/authorize?${params.toString()}`
+}
+
+export async function pausePlayback(token: string) {
+  const res = await fetch('https://api.spotify.com/v1/me/player/pause', {
+    method: 'PUT',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+  return res.ok
+}
+
+export async function resumePlayback(token: string) {
+  const res = await fetch('https://api.spotify.com/v1/me/player/play', {
+    method: 'PUT',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+  return res.ok
+}
+
+export async function skipToNext(token: string) {
+  const res = await fetch('https://api.spotify.com/v1/me/player/next', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+  return res.ok
+}
+
+export async function skipToPrevious(token: string) {
+  const res = await fetch('https://api.spotify.com/v1/me/player/previous', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+  return res.ok
+}
+
+export async function getPlaybackState(token: string) {
+  const res = await fetch('https://api.spotify.com/v1/me/player', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+  if (!res.ok) return null
+  return res.json()
 } 
